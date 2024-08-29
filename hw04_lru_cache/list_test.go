@@ -48,4 +48,11 @@ func TestList(t *testing.T) {
 		}
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
 	})
+
+	t.Run("nil item", func(t *testing.T) {
+		l := NewList()
+
+		require.EqualError(t, l.Remove(nil), "can't remove nil item")
+		require.EqualError(t, l.MoveToFront(nil), "can't move item to front: can't remove nil item")
+	})
 }
