@@ -67,4 +67,32 @@ func TestRun(t *testing.T) {
 		require.Equal(t, runTasksCount, int32(tasksCount), "not all tasks were completed")
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
+
+	t.Run("corner cases", func(t *testing.T) {
+		var runTasksCount int32
+		suite := []struct {
+			name    string
+			N       int
+			M       int
+			taskLen int
+			err     error
+		}{
+			{"N <= 0", 0, 1, 5, ErrInvalidArgs},
+			{"M <= 0", 1, 0, 5, ErrInvalidArgs},
+			{"zero tasks", 10, 1, 0, nil},
+		}
+		for _, test := range suite {
+			tasks := make([]Task, 0, test.taskLen)
+			for i := 0; i < test.taskLen; i++ {
+				tasks = append(tasks, func() error {
+					time.Sleep(time.Millisecond * time.Duration(rand.Intn(100)))
+					atomic.AddInt32(&runTasksCount, 1)
+					return fmt.Errorf("error from task %d", i)
+				})
+			}
+			result := Run(tasks, test.N, test.M)
+			require.Equalf(t, test.err, result, test.name)
+		}
+	})
+
 }
