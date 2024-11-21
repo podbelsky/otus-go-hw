@@ -94,5 +94,4 @@ func TestRun(t *testing.T) {
 			require.Equalf(t, test.err, result, test.name)
 		}
 	})
-
 }

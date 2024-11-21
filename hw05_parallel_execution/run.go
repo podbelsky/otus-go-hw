@@ -34,23 +34,23 @@ func worker(tasks <-chan Task, done <-chan struct{}, remainErrCount *int64, wg *
 }
 
 // Run starts tasks in N goroutines and stops its work when receiving M errors from tasks.
-func Run(tasks []Task, N, M int) error {
-	if N <= 0 || M <= 0 {
+func Run(tasks []Task, n, m int) error {
+	if n <= 0 || m <= 0 {
 		return ErrInvalidArgs
 	}
 
-	if len(tasks) < N {
-		N = len(tasks)
+	if len(tasks) < n {
+		n = len(tasks)
 	}
 
 	donech := make(chan struct{})
 	tasksch := make(chan Task, len(tasks))
 
-	remainErrCount := int64(M)
+	remainErrCount := int64(m)
 
 	wg := &sync.WaitGroup{}
-	wg.Add(N)
-	for i := 0; i < N; i++ {
+	wg.Add(n)
+	for i := 0; i < n; i++ {
 		go worker(tasksch, donech, &remainErrCount, wg)
 	}
 
