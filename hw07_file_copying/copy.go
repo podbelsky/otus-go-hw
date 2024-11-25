@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"io"
-	"log"
 	"os"
 
 	"github.com/cheggaaa/pb"
@@ -57,11 +56,12 @@ func Copy(fromPath string, toPath string, offset, limit int64) error {
 	proxyReader := progress.NewProxyReader(fromFile)
 
 	_, err = io.CopyN(toFile, proxyReader, limit)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	progress.Finish()
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
