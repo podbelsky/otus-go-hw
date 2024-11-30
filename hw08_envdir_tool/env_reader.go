@@ -67,6 +67,10 @@ func readValue(path string) (string, error) {
 		return "", e
 	}
 
+	if e == nil { //  found new line
+		value = value[0 : len(value)-1] // trim delimeter
+	}
+
 	value = bytes.ReplaceAll(value, []byte{empty}, []byte{newl})
 	value = bytes.TrimRight(value, ` \t`)
 
